@@ -49,7 +49,7 @@ $("#addTrainBtn").on("click", function (event) {
 
 
 
-database.ref().on("child_added", function(childSnapshot, prevChildKey) { // CHANGE ALL OF THIS
+database.ref().on("child_added", function(childSnapshot, prevChildKey) { // 
 
     console.log(childSnapshot.val());
   
@@ -67,8 +67,6 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) { // CHAN
 
 
     var actualStart = moment(time, "HH:mm");
-    console.log(actualStart);
-    console.log("----------------------");
 
     var timeDifference = moment().diff(moment(actualStart), "minutes");
 
