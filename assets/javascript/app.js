@@ -12,8 +12,9 @@ var config = {
 // take inputs from form, add them to firebase
 // "child-watcher will takes those inputs and manipulate them accordingly for the train watcher."
 
+var database = firebase.database();
 
-$(".addTrainBtn").on("click", function (event) {
+$("#addTrainBtn").on("click", function (event) {
     event.preventDefault();
 
     // take inputs from forms and make them a new object
@@ -21,8 +22,7 @@ $(".addTrainBtn").on("click", function (event) {
 
     var trainName = $("#trainNameInput").val().trim();
     var destination = $("#destinationInput").val().trim();
-    var time = moment($("#timeInput").val().trim(), "HH:mm").format("X");
-    console.log(time);
+    var time = $("#timeInput").val().trim();
     var frequency = $("#frequencyInput").val().trim();
 
     var newTrain = {
@@ -37,17 +37,17 @@ $(".addTrainBtn").on("click", function (event) {
     console.log(newTrain);
     alert("train added");
 
-    $("#trainNameInput").clear();
-    $("#destinationInput").clear();
-    $("#timeInput").clear();
-    $("#frequencyInput").clear();
+    $("#trainNameInput").val("");
+    $("#destinationInput").val("");
+    $("#timeInput").val("");
+    $("#frequencyInput").val("");
 
 });
 
 
   // add "child watcher"
 
-var database = firebase.database();
+
 
 database.ref().on("child_added", function(childSnapshot, prevChildKey) { // CHANGE ALL OF THIS
 
@@ -62,28 +62,24 @@ database.ref().on("child_added", function(childSnapshot, prevChildKey) { // CHAN
     // Employee Info
     console.log(trainName);
     console.log(destination);
-    console.log(time);
+    console.log(time); // in uxix
     console.log(frequency);
-  
-    // Prettify the employee start
-    var timePretty = moment.unix(time).format("HH:mm");
-  
-    // Calculate the months worked using hardcore math
-    // To calculate the months worked
 
-    if (/*timePretty is after the current time */) { //might need a while loop for while the current time is before the arrival time to make the next arrival closer to the current time
-        var nextArrival = ""; // display the current next train
-        console.log(nextArrival);
-    } else {
-        var nextArrival = ""; // calculate the next train
-        console.log(nextArrival);
-    }
-    
-    // Calculate the total billed rate
-    var minutesAway = ""; // next arrival - current time
-    console.log(minutesAway);
-  
+
+    var actualStart = moment(time, "HH:mm");
+    console.log(actualStart);
+    console.log("----------------------");
+
+    var timeDifference = moment().diff(moment(actualStart), "minutes");
+
+    var timeApart = timeDifference % frequency;
+
+    var timeTilTrain = frequency - timeApart;
+
+    var nextTrain = moment().add(timeTilTrain, "minutes").format("HH:mm");
+
+   
     // Add each train's data into the table
-    $("#train-data > tbody").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
-    frequency + "</td><td>" + nextArrival + "</td><td>" + minutesAway + "</td></tr>");
+    $("#train-data").append("<tr><td>" + trainName + "</td><td>" + destination + "</td><td>" +
+    frequency + "</td><td>" + nextTrain + "</td><td>" + timeTilTrain + "</td></tr>");
   });
